@@ -2,18 +2,21 @@ import './App.css'
 import { useState } from 'react'
 import { Input } from './components/Input'
 import { Button } from './components/Button'
+import { Grade } from './components/Grade'
 
 function App() {
   const [subject, setSubject] = useState('') // disciplina
   const [avaGrade, setAvaGrade] = useState('') // notaAva
   const [examGrade, setExamGrade] = useState('') // notaProva
 
-  const [grades, setGrades] = useState<Array<{
-    subject: string;
-    avaGrade: number;
-    examGrade: number;
-    finalGrade: number;
-  }>>(() => {
+  const [grades, setGrades] = useState<
+    Array<{
+      subject: string
+      avaGrade: number
+      examGrade: number
+      finalGrade: number
+    }>
+  >(() => {
     const data = localStorage.getItem('UnivespGrades')
     try {
       const parsed = data ? JSON.parse(data) : []
@@ -23,17 +26,23 @@ function App() {
     }
   })
 
-  const handleCalculate = () => { 
+  const handleCalculate = () => {
     const calculation = Number(avaGrade) * 0.4 + Number(examGrade) * 0.6
 
     const newGrade = {
       subject,
       avaGrade: Number(avaGrade),
       examGrade: Number(examGrade),
-      finalGrade: Number(calculation.toFixed(2)) 
+      finalGrade: Number(calculation.toFixed(2)),
     }
 
     const updatedGrades = [...grades, newGrade]
+    setGrades(updatedGrades)
+    localStorage.setItem('UnivespGrades', JSON.stringify(updatedGrades))
+  }
+
+  const handleRemoveGrade = (indexToRemove: number) => {
+    const updatedGrades = grades.filter((_, index) => index !== indexToRemove)
     setGrades(updatedGrades)
     localStorage.setItem('UnivespGrades', JSON.stringify(updatedGrades))
   }
@@ -43,19 +52,19 @@ function App() {
       <h1>Calculadora UNIVESP</h1>
       <Input
         type="text"
-        name="Disciplina" 
+        name="Disciplina"
         value={subject}
         onChange={(e) => setSubject(e.target.value)}
       />
       <Input
         type="number"
-        name="Média AVA" 
+        name="Média AVA"
         value={avaGrade}
         onChange={(e) => setAvaGrade(e.target.value)}
       />
       <Input
         type="number"
-        name="Prova Regular" 
+        name="Prova Regular"
         value={examGrade}
         onChange={(e) => setExamGrade(e.target.value)}
       />
@@ -65,9 +74,12 @@ function App() {
           <h2>Resultados:</h2>
           <ul>
             {grades.map((grade, index) => (
-              <li key={index}>
-                <strong>{grade.subject}:</strong> Nota final: {grade.finalGrade.toFixed(2)}
-              </li>
+              <Grade
+                key={index}
+                subject={grade.subject}
+                finalGrade={grade.finalGrade.toFixed(2)}
+                onRemove={() => handleRemoveGrade(index)}
+              />
             ))}
           </ul>
         </div>
