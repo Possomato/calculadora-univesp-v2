@@ -1,33 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { useState } from 'react'
+
+import { Input } from './components/Input'
+import { Button } from './components/Button'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [disciplina, setDisciplina] = useState('')
+  const [notaAva, setNotaAva] = useState('')
+  const [notaProva, setNotaProva] = useState('')
+  const [result, setResult] = useState<number | null>(null)
+
+  function handleButton() {
+    const calculation = Number(notaAva) * 0.4 + Number(notaProva) * 0.6
+    setResult(calculation)
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>Calculadora UNIVESP</h1>
+      <Input
+        type="text"
+        name="Disciplina"
+        value={disciplina}
+        onChange={(e) => setDisciplina(e.target.value)}
+      />
+      <Input
+        type="number"
+        name="Média AVA"
+        value={notaAva}
+        onChange={(e) => setNotaAva(e.target.value)}
+      />
+      <Input
+        type="number"
+        name="Prova Regular"
+        value={notaProva}
+        onChange={(e) => setNotaProva(e.target.value)}
+      />
+      <Button title="Calcular" onClick={handleButton} />
+      {result !== null && (
+        <div>
+          <h2>{disciplina}</h2>
+          <span>Nota final: {result}</span>
+        </div>
+      )}
     </>
   )
 }
